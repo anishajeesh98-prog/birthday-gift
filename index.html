@@ -1,0 +1,259 @@
+anishajeesh98@gmail.com<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🎉</title>
+    <style>
+        /* Modern Reset and Root Variables */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --accent: #ff4757;
+        }
+
+        /* Responsive Layout & Animated Background */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(-45deg, #ff758c, #ff7eb3, #ffe3e3, #efd5ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Interactive Confetti Canvas Layer */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Mobile-First Card Container */
+        .card-container {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            z-index: 20;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Typography & Custom Animations */
+        .hero-emoji {
+            font-size: 4.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .message {
+            color: var(--text-main);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Mobile-Friendly Interactive Action Button */
+        .action-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 32px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            max-width: 260px;
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(255, 117, 140, 0.4);
+        }
+
+        /* Responsiveness adjustments for smaller devices */
+        @media (max-width: 375px) {
+            .card-container {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .message {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="card-container">
+        <span class="hero-emoji" role="img" aria-label="Birthday Cake">🎂</span>
+        <h1>Happy Birthday!</h1>
+        <p class="message">
+            Wishing you a beautiful day filled with laughter, love, and unforgettable moments. May this upcoming year bring you endless happiness and success! ✨
+        </p>
+        <button class="action-btn" onclick="burstConfetti()">Celebrate! 🎉</button>
+    </div>
+
+    <script>
+        // High-Performance Confetti Engine
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#eccc68', '#ff6b81', '#70a1ff'];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiParticle {
+            constructor(isBurst = false) {
+                this.x = isBurst ? canvas.width / 2 : Math.random() * canvas.width;
+                this.y = isBurst ? canvas.height / 2 + 100 : Math.random() * -canvas.height;
+                this.size = (Math.random() * 6) + 4;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Set custom dynamics if triggered by the button burst vs passive fall
+                if (isBurst) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = (Math.random() * 12) + 5;
+                    this.speedX = Math.cos(angle) * speed;
+                    this.speedY = Math.sin(angle) * speed - 3;
+                } else {
+                    this.speedX = (Math.random() * 2) - 1;
+                    this.speedY = (Math.random() * 3) + 2;
+                }
+                
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() * 4) - 2;
+                this.opacity = 1;
+                this.isBurst = isBurst;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+
+                if (this.isBurst) {
+                    this.speedY += 0.2; // Gravity simulation for physical pop effect
+                    this.opacity -= 0.01;
+                } else {
+                    this.speedX += Math.sin(this.y / 30) * 0.02; // Gentle wind swing
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                
+                // Draw dynamic rectangular confetti strips
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 1.5);
+                ctx.restore();
+            }
+        }
+
+        // Generate passive initial falling background confetti
+        function initConfetti() {
+            for (let i = 0; i < 80; i++) {
+                particles.push(new ConfettiParticle(false));
+            }
+        }
+
+        // Trigger manual festive explosion on button click
+        function burstConfetti() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new ConfettiParticle(true));
+            }
+        }
+
+        // Master Animation Loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+
+                // Recycle passive particles off-screen, discard faded burst fragments
+                if (!p.isBurst && p.y > canvas.height) {
+                    particles[index] = new ConfettiParticle(false);
+                } else if (p.isBurst && p.opacity <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Launch site systems immediately
+        initConfetti();
+        animate();
+        
+        // Auto-burst once shortly after screen renders to greet the recipient
+        setTimeout(burstConfetti, 600);
+    </script>
+</body>
+</html>
